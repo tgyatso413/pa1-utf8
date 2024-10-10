@@ -1,0 +1,4 @@
+valid_and_uppercased_ascii.txt.expect:
+	Valid ASCII: true
+	Uppercased ASCII: “WHATSUP”
+	
