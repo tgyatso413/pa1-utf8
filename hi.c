@@ -1,4 +1,4 @@
-#include <stdint.h>
+/*#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -97,7 +97,7 @@ char is_animal_emoji_at(unsigned char str[], int32_t cpi) {
     }
 }
 
-int .() {
+int () {
     char input[300];
     fgets(input, 300, stdin);
 
@@ -112,7 +112,7 @@ int .() {
 
 
     /*char str[] = "Joséph";
-    printf("Length of string %s is %d\n", str, utf8_strlen(str));  // 6 codepoints, (even though 7 bytes)*/
+    printf("Length of string %s is %d\n", str, utf8_strlen(str));  // 6 codepoints, (even though 7 bytes)
 
     int32_t idx = 4;
     printf("Codepoint index %d is byte index %d\n", idx, codepoint_index_to_byte_index("Joséph", idx));
@@ -124,4 +124,4 @@ int .() {
 
     printf("Codepoint at %d in %s is %d\n", idx, str, codepoint_at(str, idx)); // 'p' is the 4th codepoint
     printf("Is there an animal at 5: %c\n", is_animal_emoji_at("🦀🦮🦮🦀🦀🦮🦮", 5));
-}
+}*/
