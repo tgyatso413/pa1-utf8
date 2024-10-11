@@ -164,7 +164,6 @@ int main() {
     
     puts("Enter a UTF-8 encoded string: ");
     fgets(input, MAX, stdin);
-    puts("");
     memcpy(upper, input, strlen(input) + 1);
     char bpc[MAX];
     int i = 0;
