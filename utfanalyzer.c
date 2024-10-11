@@ -118,7 +118,6 @@ int32_t codepoint_at(char str[], int32_t cpi) {
         }
 }
 
-//FIXME: Doesn't print special numbers correctly?
 void cp_as_decimal(char str[], char result[]) {
     for (int i = 0; str[i] != '\n'; i+= 1) {
         printf("%d ", codepoint_at(str, i));
@@ -132,7 +131,6 @@ void cp_as_decimal(char str[], char result[]) {
     }
 }
 
-// FIXME: Prints all emoji
 char list_animal_emoji(char str[], char result[]) {
     int index = 0;
     for (int i = 0; str[i] != '\n'; i += 1) {
@@ -166,6 +164,7 @@ int main() {
     
     puts("Enter a UTF-8 encoded string: ");
     fgets(input, MAX, stdin);
+    puts("");
     memcpy(upper, input, strlen(input) + 1);
     char bpc[MAX];
     int i = 0;
@@ -199,14 +198,3 @@ int main() {
     list_animal_emoji(input, emoji);
     printf("Animal emojis: %s\n", emoji);
 }
-
-/*Enter a UTF-8 encoded string: My 🐩’s name is Erdős.
-Valid ASCII: false
-Uppercased ASCII: "MY 🐩’S NAME IS ERDőS."
-Length in bytes: 27
-Number of code points: 21
-Bytes per code point: 1 1 1 4 3 1 1 1 1 1 1 1 1 1 1 1 1 1 2 1 1
-*Substring of the first 6 code points: "My 🐩’s"
-Code points as decimal numbers: 77 121 32 128041 8217 115 32 110 97 109 101 32 105 115 32 69 114 100 337 115 46
-Animal emojis: 🐩
-*/

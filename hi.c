@@ -97,7 +97,7 @@ char is_animal_emoji_at(unsigned char str[], int32_t cpi) {
     }
 }
 
-int main() {
+int .() {
     char input[300];
     fgets(input, 300, stdin);
 
