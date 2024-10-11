@@ -98,6 +98,10 @@ char is_animal_emoji_at(unsigned char str[], int32_t cpi) {
 }
 
 int main() {
+    char input[300];
+    fgets(input, 300, stdin);
+
+
     int32_t ret = 0;
     char str[] = "My 🐩’s name is Erdős.";
     ret = capitalize_ascii(str);

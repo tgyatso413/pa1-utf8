@@ -2,6 +2,7 @@
     "files.associations": {
         "stdint.h": "c",
         "stdio.h": "c",
-        "functional": "c"
+        "functional": "c",
+        "sstream": "c"
     }
 }
