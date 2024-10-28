@@ -1,2 +1,7 @@
-1. UTF-32 must be nice for any operation requiring the non-English alphabet - e.g. when typing with emojis - because all of its encoding happens in one number. However, like the question mentioned, it's also not efficient for ASCII characters, since 3 bytes are dedicated to holding nothing but ones. UTF-8 is the opposite: it's nice for ASCII because there are no wasted bytes, but anything requiring more than one byte takes extra work to handle.
-2. The 10 is useful because it specifies with no doubt that those bytes are dedicated to continuing the byte called 1110XXXX. It could be nice to save the bits, but the loss of space isn't as bad as not having a definitive method of knowing where the bytes of a codepoint ends. Without the continuing byte notation, it'd take more effort to make sure there are no bugs in multilingual programs or programs that use emojis.
+Consider the 3-byte sequence 11100000 10000000 10100001. Answer the following questions:
+
+What code point does it encode in UTF-8, and what character is that?
+What are the three other ways to encode that character?
+Give an example of a character that has exactly three encodings (but not four, like the one in the previous example does)
+What are some problems with having these multiple encodings, especially for ASCII characters? A web search for “overlong UTF-8 encoding” may be useful here.
+

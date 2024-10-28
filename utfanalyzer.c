@@ -20,18 +20,36 @@ int32_t capitalize_ascii(char str[]) {
     }
 }
 
+int width_from_start_byte(char start) {
+    if ((start & 0b11110000) == 0b11110000) {
+    return 4;
+    } else if ((start & 0b11100000) == 0b11100000) {
+    return 3;
+    } else if ((start & 0b11000000) == 0b11000000) {
+    return 2;
+    } else if (start > 0) { return 1; }
+    else { return 0; }
+}
+
+int codepoint_to_byte_index(char str[], int cpi) {
+    int result = 0;
+    int index = 0;
+    for (int i = 0; i < sizeof(str); i++) { result += width_from_start_byte(str[cpi]); index += width_from_start_byte(str[cpi]); }
+    return result;
+}
+
 int length_in_bytes(char str[]) {
     int index = 0;
     for (int i = 0; str[i] != '\n'; i+= 1) {
-        if (str[i] > 0 && str[i] <= 0b1111111) {
+        if (width_from_start_byte(str[i]) == 1) {
             index += 1;
-        } else if ((str[i] & 0b11100000) == 0b11000000) {
+        } else if (width_from_start_byte(str[i]) == 2) {
             index += 2;
             i += 1;
-        } else if ((str[i] & 0b11110000) == 0b11100000) {
+        } else if (width_from_start_byte(str[i]) == 3) {
             index += 3;
             i += 2;
-        } else if ((str[i] & 0b11111000) == 0b11110000) {
+        } else if (width_from_start_byte(str[i]) == 4) {
             index += 4;
             i += 3;
         }
@@ -63,15 +81,18 @@ void bytes_per_codepoint(char str[], char result[]) {
             result[index] = '2';
             i += 1;
         } else if ((str[i] & 0b11110000) == 0b11100000) {
+            printf("%c", str[i]);
             result[index] = '3';
             i += 2;
         } else if ((str[i] & 0b11111000) == 0b11110000) {
             result[index] = '4';
             i += 3;
         }
-        if (str[i + 1] != '\n') {
+        if (str[i] != '\n') {
             result[index + 1] = ' ';
             index += 2;
+        } else {
+            return;
         }
     }
 }
@@ -92,14 +113,17 @@ int32_t codepoint_index_to_byte_index(unsigned char str[], int32_t cpi) {
     return index;
 }
 
+//fixme
 void utf8_substring(char str[], int32_t cpi_start, int32_t cpi_end, char result[]) {
     int byte_start = codepoint_index_to_byte_index(str, cpi_start);
     int byte_end = codepoint_index_to_byte_index(str, cpi_end);
     int index = 0;
 
     for (int i = byte_start; i < byte_end; i++){
-        result[index] = str[i];
-        index += 1;
+        if (str[i] != '\n') {
+            result[index] = str[i];
+            index += 1;
+        }
     }
     result[index] = '\0';
 }
@@ -131,6 +155,7 @@ void cp_as_decimal(char str[], char result[]) {
     }
 }
 
+//fixme
 char list_animal_emoji(char str[], char result[]) {
     int index = 0;
     for (int i = 0; str[i] != '\n'; i += 1) {
@@ -157,8 +182,12 @@ char list_animal_emoji(char str[], char result[]) {
     }
 }
 
+void next_utf8_char(char str[], int32_t cpi, char result[]) {
+
+}
+
 int main() {
-    int MAX = 300;
+    int MAX = 256;
     char input[MAX];
     char upper[MAX];
     
@@ -178,7 +207,7 @@ int main() {
     printf("Valid ASCII: %s\n", is_ascii(input));
 
     capitalize_ascii(upper);
-    printf("Uppercased ASCII: %s\n", upper);
+    printf("Uppercased ASCII: %s", upper);
 
     printf("Length in bytes: %d\n", length_in_bytes(input));
 
