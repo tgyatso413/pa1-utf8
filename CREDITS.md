@@ -1,6 +1,7 @@
 - Used Professor Schulman's example of getting a codepoint for two bytes
 - Austin Kinnear explained << and >> (shifting) to me
 - Looked at C library to understand memcpy() function
+- Researched overlong encoding: https://kevinboone.me/overlong.html
 
 - Gave ChatGPT the prompt: "Help me finish a function named codepoint_at that gets the codepoint of a character but don't give me the code"
 "To complete the codepoint_at function for obtaining the codepoint of a UTF-8 encoded character, you need to handle the remaining cases where the character spans three or four bytes. Here are the steps to follow:

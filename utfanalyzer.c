@@ -28,7 +28,7 @@ int width_from_start_byte(char start) {
     } else if ((start & 0b11000000) == 0b11000000) {
     return 2;
     } else if (start > 0) { return 1; }
-    else { return 0; }
+    else { return -1; }
 }
 
 int codepoint_to_byte_index(char str[], int cpi) {
@@ -101,15 +101,20 @@ void bytes_per_codepoint(char str[], char result[]) {
 
 int32_t codepoint_index_to_byte_index(unsigned char str[], int32_t cpi) {
     int index = 0;
-    for (int i = 0; i < cpi; i += 1) {
+    int cp = 0;
+    for (int i = 0; cp != cpi; i += 1) {
         if ((str[i] > 0 && str[i] <= 0b1111111)) {
            index += 1;
+           cp += 1;
         } else if ((str[i] & 0b11100000) == 0b11000000) {
             index += 2;
+            cp += 1;
         } else if ((str[i] & 0b11110000) == 0b11100000) {
             index += 3;
+            cp += 1;
         } else if ((str[i] & 0b11111000) == 0b11110000) {
             index += 4;
+            cp += 1;
         }
     }
     return index;
@@ -156,7 +161,7 @@ void cp_as_decimal(char str[], char result[]) {
     }
 }
 
-
+// FIXME
 char list_animal_emoji(char str[], char result[]) {
     int index = 0;
     int width;
@@ -174,8 +179,6 @@ char list_animal_emoji(char str[], char result[]) {
                 result[index + 1] = str[i + 1];
                 result[index + 2] = str[i + 2];
                 result[index + 3] = str[i + 3];
-            }
-            if (str[i + 1] != '\n') {
                 index += 4;
             }
             i += 3;
