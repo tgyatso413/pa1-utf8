@@ -226,7 +226,7 @@ int main() {
     char input[MAX];
     char upper[MAX];
     
-    puts("Enter a UTF-8 encoded string: ");
+    printf("Enter a UTF-8 encoded string: ");
     fgets(input, MAX, stdin);
     memcpy(upper, input, strlen(input) + 1);
     char bpc[MAX];
