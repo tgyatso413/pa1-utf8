@@ -34,7 +34,7 @@ int width_from_start_byte(char start) {
 int codepoint_to_byte_index(char str[], int cpi) {
     int result = 0;
     int index = 0;
-    for (int i = 0; i < sizeof(str); i++) { result += width_from_start_byte(str[cpi]); index += width_from_start_byte(str[cpi]); }
+    for (int i = 0; i < strlen(str); i++) { result += width_from_start_byte(str[cpi]); index += width_from_start_byte(str[cpi]); }
     return result;
 }
 
@@ -75,13 +75,13 @@ int32_t utf8_strlen(char str[]) {
 void bytes_per_codepoint(char str[], char result[]) {
     int index = 0;
     for (int i = 0; str[i] != '\n'; i+= 1) {
+        if (str[width_from_start_byte(str[i]) + i - 1] != '\n') {
         if (str[i] > 0 && str[i] <= 0b1111111) {
             result[index] = '1';
         } else if ((str[i] & 0b11100000) == 0b11000000) {
             result[index] = '2';
             i += 1;
         } else if ((str[i] & 0b11110000) == 0b11100000) {
-            printf("%c", str[i]);
             result[index] = '3';
             i += 2;
         } else if ((str[i] & 0b11111000) == 0b11110000) {
@@ -94,6 +94,8 @@ void bytes_per_codepoint(char str[], char result[]) {
         } else {
             return;
         }
+        }
+        
     }
 }
 
@@ -113,7 +115,6 @@ int32_t codepoint_index_to_byte_index(unsigned char str[], int32_t cpi) {
     return index;
 }
 
-//fixme
 void utf8_substring(char str[], int32_t cpi_start, int32_t cpi_end, char result[]) {
     int byte_start = codepoint_index_to_byte_index(str, cpi_start);
     int byte_end = codepoint_index_to_byte_index(str, cpi_end);
@@ -155,26 +156,30 @@ void cp_as_decimal(char str[], char result[]) {
     }
 }
 
-//fixme
+
 char list_animal_emoji(char str[], char result[]) {
     int index = 0;
+    int width;
     for (int i = 0; str[i] != '\n'; i += 1) {
-        if ((str[i] & 0b11100000) == 0b11000000) {
+        if (str[width_from_start_byte(str[i]) + i - 1] != '\n') {
+            width = width_from_start_byte(str[i]);
+        if (width == 2) {
             i += 1;
-        } else if ((str[i] & 0b11110000) == 0b11100000) {
+        } else if (width == 3) {
             i += 2;
-        } else if ((str[i] & 0b11111000) == 0b11110000) {
+        } else if (width == 4) {
             int cp = codepoint_at(str, i);
             if (((cp >= 128000) && (cp <= 128063)) || (cp >= 129408) && (cp <= 129454)) {
-            result[index] = str[i];
-            result[index + 1] = str[i + 1];
-            result[index + 2] = str[i + 2];
-            result[index + 3] = str[i + 3];
+                result[index] = str[i];
+                result[index + 1] = str[i + 1];
+                result[index + 2] = str[i + 2];
+                result[index + 3] = str[i + 3];
             }
             if (str[i + 1] != '\n') {
                 index += 4;
             }
             i += 3;
+        }
         }
     }
     if (index != 0) {
@@ -182,9 +187,36 @@ char list_animal_emoji(char str[], char result[]) {
     }
 }
 
-void next_utf8_char(char str[], int32_t cpi, char result[]) {
-
+void encode_utf8(int32_t codepoint, char result[]) {
+    if (codepoint <= 0x7F) {
+        result[0] = (char)codepoint;
+        result[1] = '\0';
+    } else if (codepoint <= 0x7FF) {
+        result[0] = (char)(0xC0 | (codepoint >> 6));
+        result[1] = (char)(0x80 | (codepoint & 0x3F));
+        result[2] = '\0';
+    } else if (codepoint <= 0xFFFF) {
+        result[0] = (char)(0xE0 | (codepoint >> 12));
+        result[1] = (char)(0x80 | ((codepoint >> 6) & 0x3F));
+        result[2] = (char)(0x80 | (codepoint & 0x3F));
+        result[3] = '\0';
+    } else if (codepoint <= 0x10FFFF) {
+        result[0] = (char)(0xF0 | (codepoint >> 18));
+        result[1] = (char)(0x80 | ((codepoint >> 12) & 0x3F));
+        result[2] = (char)(0x80 | ((codepoint >> 6) & 0x3F));
+        result[3] = (char)(0x80 | (codepoint & 0x3F));
+        result[4] = '\0';
+    } else {
+        // Invalid codepoint
+        result[0] = '\0'; // Set result to empty
+    }
 }
+
+void next_utf8_char(char str[], int32_t cpi, char result[]) {
+    int codepoint = codepoint_at(str, cpi);
+    encode_utf8(codepoint + 1, result);
+}
+
 
 int main() {
     int MAX = 256;
@@ -203,6 +235,7 @@ int main() {
     char emoji[MAX];
     char cpd[MAX];
     char sub[MAX];
+    char nxt[MAX];
 
     printf("Valid ASCII: %s\n", is_ascii(input));
 
@@ -225,4 +258,7 @@ int main() {
 
     list_animal_emoji(input, emoji);
     printf("Animal emojis: %s\n", emoji);
+    
+    next_utf8_char(input, 3, nxt);
+    printf("Next Character of Codepoint at Index 3: %s\n", nxt);
 }
