@@ -3,7 +3,7 @@
 #include <string.h>
 
 char* is_ascii(unsigned char str[]) {
-    for (int i = 0; str[i] != '\n'; i += 1) {
+    for (int i = 0; str[i] != '\0'; i += 1) {
         if (str[i] > 128) {
             return "false";
         }
@@ -12,8 +12,7 @@ char* is_ascii(unsigned char str[]) {
 }
 
 int32_t capitalize_ascii(char str[]) {
-    int x = 0;
-    for (int i = 0; str[i] != '\n'; i += 1) {
+    for (int i = 0; str[i] != '\0'; i += 1) {
         if (str[i] >= 97 && str[i] <= 122) {
             str[i] -= 32;
         }
@@ -40,7 +39,7 @@ int codepoint_to_byte_index(char str[], int cpi) {
 
 int length_in_bytes(char str[]) {
     int index = 0;
-    for (int i = 0; str[i] != '\n'; i+= 1) {
+    for (int i = 0; str[i] != '\0'; i+= 1) {
         if (width_from_start_byte(str[i]) == 1) {
             index += 1;
         } else if (width_from_start_byte(str[i]) == 2) {
@@ -59,7 +58,7 @@ int length_in_bytes(char str[]) {
 
 int32_t utf8_strlen(char str[]) {
     int len = 0;
-    for (int i = 0; str[i] != '\n'; i += 1) {
+    for (int i = 0; str[i] != '\0'; i += 1) {
         len += 1;
         if ((str[i] & 0b11100000) == 0b11000000) {
             i += 1;
@@ -74,8 +73,8 @@ int32_t utf8_strlen(char str[]) {
 
 void bytes_per_codepoint(char str[], char result[]) {
     int index = 0;
-    for (int i = 0; str[i] != '\n'; i+= 1) {
-        if (str[width_from_start_byte(str[i]) + i - 1] != '\n') {
+    for (int i = 0; str[i] != '\0'; i+= 1) {
+        if (str[width_from_start_byte(str[i]) + i - 1] != '\0') {
         if (str[i] > 0 && str[i] <= 0b1111111) {
             result[index] = '1';
         } else if ((str[i] & 0b11100000) == 0b11000000) {
@@ -88,7 +87,7 @@ void bytes_per_codepoint(char str[], char result[]) {
             result[index] = '4';
             i += 3;
         }
-        if (str[i] != '\n') {
+        if (str[i] != '\0') {
             result[index + 1] = ' ';
             index += 2;
         } else {
@@ -126,7 +125,7 @@ void utf8_substring(char str[], int32_t cpi_start, int32_t cpi_end, char result[
     int index = 0;
 
     for (int i = byte_start; i < byte_end; i++){
-        if (str[i] != '\n') {
+        if (str[i] != '\0') {
             result[index] = str[i];
             index += 1;
         }
@@ -149,7 +148,7 @@ int32_t codepoint_at(char str[], int32_t cpi) {
 }
 
 void cp_as_decimal(char str[], char result[]) {
-    for (int i = 0; str[i] != '\n'; i+= 1) {
+    for (int i = 0; str[i] != '\0'; i+= 1) {
         printf("%d ", codepoint_at(str, i));
         if ((str[i] & 0b11100000) == 0b11000000) {
             i += 1;
@@ -161,12 +160,11 @@ void cp_as_decimal(char str[], char result[]) {
     }
 }
 
-// FIXME
 char list_animal_emoji(char str[], char result[]) {
     int index = 0;
     int width;
-    for (int i = 0; str[i] != '\n'; i += 1) {
-        if (str[width_from_start_byte(str[i]) + i - 1] != '\n') {
+    for (int i = 0; str[i] != '\0'; i += 1) {
+        if (str[width_from_start_byte(str[i]) + i - 1] != '\0') {
             width = width_from_start_byte(str[i]);
         if (width == 2) {
             i += 1;
@@ -186,7 +184,8 @@ char list_animal_emoji(char str[], char result[]) {
         }
     }
     if (index != 0) {
-        result[index] = ' ';
+        result[index] = 0;
+        result[index + 1] = 0;
     }
 }
 
@@ -228,6 +227,7 @@ int main() {
     
     printf("Enter a UTF-8 encoded string: ");
     fgets(input, MAX, stdin);
+    input[strcspn(input, "\n")] = 0;
     memcpy(upper, input, strlen(input) + 1);
     char bpc[MAX];
     int i = 0;
@@ -243,7 +243,7 @@ int main() {
     printf("Valid ASCII: %s\n", is_ascii(input));
 
     capitalize_ascii(upper);
-    printf("Uppercased ASCII: %s", upper);
+    printf("Uppercased ASCII: %s\n", upper);
 
     printf("Length in bytes: %d\n", length_in_bytes(input));
 
